@@ -8,6 +8,8 @@ MCP_SERVER_KEY = 'mcp_server'
 MCP_TOOLS_KEY = 'mcp_tools'
 MCP_RESOURCES_KEY = 'mcp_resources'
 MCP_PROMPTS_KEY = 'mcp_prompts'
+MCP_STARTUP_KEY = 'mcp_startup'
+MCP_SHUTDOWN_KEY = 'mcp_shutdown'
 
 @xai_component
 class MCPCreateServer(Component):
@@ -26,6 +28,8 @@ class MCPCreateServer(Component):
     def execute(self, ctx) -> None:
         try:
             from mcp.server.fastmcp import FastMCP
+            from contextlib import asynccontextmanager
+            from typing import AsyncIterator
         except ImportError:
             print("Error: Model Context Protocol SDK not installed.")
             print("Please install it with: pip install mcp")
@@ -39,6 +43,28 @@ class MCPCreateServer(Component):
             
         server = FastMCP(name, dependencies=dependencies)
         
+        # Create a lifespan function that will execute the startup and shutdown components
+        @asynccontextmanager
+        async def server_lifespan(server) -> AsyncIterator[dict]:
+            """Manage server startup and shutdown lifecycle."""
+            try:
+                # Execute startup components
+                for startup in ctx.get(MCP_STARTUP_KEY, []):
+                    if hasattr(startup, 'next') and startup.next:
+                        startup_ctx = ctx.copy()
+                        SubGraphExecutor(startup.next).do(startup_ctx)
+                
+                yield {}  # Context dictionary
+            finally:
+                # Execute shutdown components
+                for shutdown in ctx.get(MCP_SHUTDOWN_KEY, []):
+                    if hasattr(shutdown, 'next') and shutdown.next:
+                        shutdown_ctx = ctx.copy()
+                        SubGraphExecutor(shutdown.next).do(shutdown_ctx)
+        
+        # Set the lifespan on the server
+        server.lifespan = server_lifespan
+        
         print(f"Created MCP server: {name}")
         if dependencies:
             print(f"With dependencies: {', '.join(dependencies)}")
@@ -46,64 +72,32 @@ class MCPCreateServer(Component):
         ctx[MCP_SERVER_KEY] = server
 
 
-@xai_component
-class MCPServerLifespan(Component):
+@xai_component(type='Start', color='#FF8C00')  # Dark Orange for startup
+class MCPServerOnStart(Component):
     """
-    Sets up a lifespan context manager for the MCP server.
+    Defines code to execute when the MCP server starts.
     
-    ##### inPorts:
-    - startup_code (str): Python code to execute on server startup.
-    - shutdown_code (str): Python code to execute on server shutdown.
+    This component allows you to define a sequence of components to execute
+    during the server startup phase.
     """
-    startup_code: InArg[str]
-    shutdown_code: InArg[str]
     
-    def execute(self, ctx) -> None:
-        if MCP_SERVER_KEY not in ctx:
-            print("Error: MCP server not found in context. Please create a server first.")
-            return
-            
-        server = ctx[MCP_SERVER_KEY]
-        startup_code = self.startup_code.value or ""
-        shutdown_code = self.shutdown_code.value or ""
-        
-        try:
-            from contextlib import asynccontextmanager
-            from typing import AsyncIterator
-            
-            # Create a namespace for the lifespan function
-            namespace = {}
-            
-            # Add necessary imports to the namespace
-            exec("from contextlib import asynccontextmanager", namespace)
-            exec("from typing import AsyncIterator", namespace)
-            
-            # Define the lifespan function
-            lifespan_code = f"""
-@asynccontextmanager
-async def server_lifespan(server) -> AsyncIterator[dict]:
-    \"\"\"Manage server startup and shutdown lifecycle.\"\"\"
-    try:
-        # Initialize resources on startup
-{startup_code}
-        yield {"{}"} # Context dictionary
-    finally:
-        # Clean up on shutdown
-{shutdown_code}
-"""
-            
-            # Execute the code to define the lifespan function
-            exec(lifespan_code, namespace)
-            
-            # Get the lifespan function from the namespace
-            lifespan_function = namespace["server_lifespan"]
-            
-            # Set the lifespan on the server
-            server.lifespan = lifespan_function
-            
-            print("Configured server lifespan")
-        except Exception as e:
-            print(f"Error configuring server lifespan: {e}")
+    def init(self, ctx):
+        ctx.setdefault(MCP_STARTUP_KEY, []).append(self)
+        print("Registered server startup handler")
+
+
+@xai_component(type='Start', color='#B22222')  # Firebrick for shutdown
+class MCPServerOnShutdown(Component):
+    """
+    Defines code to execute when the MCP server shuts down.
+    
+    This component allows you to define a sequence of components to execute
+    during the server shutdown phase.
+    """
+    
+    def init(self, ctx):
+        ctx.setdefault(MCP_SHUTDOWN_KEY, []).append(self)
+        print("Registered server shutdown handler")
 
 
 @xai_component

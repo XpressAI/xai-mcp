@@ -38,24 +38,25 @@ This library provides components for implementing MCP servers, organized into se
 ### Server Setup Components
 
 - **MCPCreateServer**: Creates a FastMCP server instance with the specified name and optional dependencies.
-- **MCPServerLifespan**: Sets up a lifespan context manager for the MCP server to handle startup and shutdown operations.
 - **MCPRunServer**: Starts the MCP server and keeps it running until interrupted.
 
 ### Start Node Components
 
 These components act as entry points for defining MCP server capabilities. They can be dragged onto the canvas to implement responses to events:
 
-- **MCPDefineTool** (Start Node): Defines a tool for the MCP server, allowing LLMs to perform actions and computations.
-- **MCPDefineResource** (Start Node): Defines a resource for the MCP server, allowing LLMs to access data through URI patterns.
-- **MCPDefinePrompt** (Start Node): Defines a prompt template for the MCP server, providing reusable interaction patterns for LLMs.
+- **MCPDefineTool** (Royal Blue): Defines a tool for the MCP server, allowing LLMs to perform actions and computations.
+- **MCPDefineResource** (Lime Green): Defines a resource for the MCP server, allowing LLMs to access data through URI patterns.
+- **MCPDefinePrompt** (Dark Orchid): Defines a prompt template for the MCP server, providing reusable interaction patterns for LLMs.
+- **MCPServerOnStart** (Dark Orange): Defines code to execute when the MCP server starts.
+- **MCPServerOnShutdown** (Firebrick): Defines code to execute when the MCP server shuts down.
 
 ### Result Setting Components
 
 These components are used within the body of start nodes to set the results of tool, resource, or prompt executions:
 
-- **MCPSetToolResult**: Sets the result of a tool execution.
-- **MCPSetResourceResult**: Sets the result of a resource execution.
-- **MCPSetPromptResult**: Sets the result of a prompt execution.
+- **MCPSetToolResult** (Royal Blue): Sets the result of a tool execution.
+- **MCPSetResourceResult** (Lime Green): Sets the result of a resource execution.
+- **MCPSetPromptResult** (Dark Orchid): Sets the result of a prompt execution.
 
 ### Utility Components
 
@@ -76,7 +77,8 @@ Here's an example of how to use this component library to create an MCP server:
 3. Add **MCPDefineTool**, **MCPDefineResource**, and **MCPDefinePrompt** start nodes to define the server's capabilities
 4. For each start node, connect components to implement the logic for the tool, resource, or prompt
 5. Use **MCPSetToolResult**, **MCPSetResourceResult**, or **MCPSetPromptResult** to set the results
-6. Add an **MCPRunServer** component to start the server
+6. Optionally, add **MCPServerOnStart** and **MCPServerOnShutdown** start nodes to define server lifecycle behavior
+7. Add an **MCPRunServer** component to start the server
 
 ## Example: Creating a Calculator Tool
 
@@ -86,6 +88,13 @@ Here's an example of how to use this component library to create an MCP server:
 4. Connect another **MCPGetArgument** component to get the "b" argument
 5. Connect a component that adds the two numbers
 6. Connect an **MCPSetToolResult** component to set the result
+
+## Example: Server Lifecycle Management
+
+1. Drag an **MCPServerOnStart** start node onto the canvas
+2. Connect components to initialize resources, load data, or perform other startup tasks
+3. Drag an **MCPServerOnShutdown** start node onto the canvas
+4. Connect components to clean up resources, save data, or perform other shutdown tasks
 
 ## Documentation
 
