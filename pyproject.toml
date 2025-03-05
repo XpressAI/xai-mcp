@@ -1,12 +1,12 @@
 [project]
-name = "xircuits-component-library-template"
+name = "xircuits-mcp"
 version = "0.1.0"
-description = "A brief description of your component library"
-authors = [{ name = "Your Name", email = "you@example.com" }]
+description = "Xircuits component library for implementing Model Context Protocol (MCP) servers"
+authors = [{ name = "Eduardo Gonzalez", email = "eduardo@xpress.ai" }]
 license = "Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/yourrepo/your-library"
-keywords = ["xircuits"]
+repository = "https://github.com/xpressai/xai-mcp"
+keywords = ["xircuits", "mcp", "model-context-protocol", "agents", "ai"]
 
 # Xircuits-specific configurations
 [tool.xircuits]
