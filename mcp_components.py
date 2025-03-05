@@ -144,6 +144,7 @@ class MCPDefineTool(Component):
     ##### inPorts:
     - name (str): The name of the tool.
     - description (str): A description of what the tool does.
+    - args_schema (dict): A dictionary of the form (Dict[str, str] with argument names and types.)
     
     ##### outPorts:
     - args: The arguments passed to the tool.
@@ -151,6 +152,7 @@ class MCPDefineTool(Component):
     """
     name: InCompArg[str]
     description: InArg[str]
+    args_schema: InArg[dict]
     
     args: OutArg[dict]
     ctx: OutArg[Any]
@@ -273,6 +275,7 @@ class MCPDefinePrompt(Component):
     ##### inPorts:
     - name (str): The name of the prompt.
     - description (str): A description of what the prompt does.
+    - args_schema (dict): A description of the arguments used in the prompt.
     
     ##### outPorts:
     - args: The arguments passed to the prompt.
@@ -280,6 +283,7 @@ class MCPDefinePrompt(Component):
     """
     name: InCompArg[str]
     description: InArg[str]
+    args_schema: InArg[dict]
     
     args: OutArg[dict]
     ctx: OutArg[Any]
