@@ -155,7 +155,7 @@ class MCPDefineTool(Component):
     args_schema: InArg[dict]
     
     args: OutArg[dict]
-    ctx: OutArg[Any]
+    ctx: OutArg[any]
     
     def init(self, ctx):
         if MCP_SERVER_KEY not in ctx:
@@ -221,7 +221,7 @@ class MCPDefineResource(Component):
     description: InArg[str]
     
     args: OutArg[dict]
-    ctx: OutArg[Any]
+    ctx: OutArg[any]
     
     def init(self, ctx):
         if MCP_SERVER_KEY not in ctx:
@@ -286,7 +286,7 @@ class MCPDefinePrompt(Component):
     args_schema: InArg[dict]
     
     args: OutArg[dict]
-    ctx: OutArg[Any]
+    ctx: OutArg[any]
     
     def init(self, ctx):
         if MCP_SERVER_KEY not in ctx:
@@ -343,7 +343,7 @@ class MCPSetToolResult(Component):
     ##### inPorts:
     - result: The result to return from the tool.
     """
-    result: InArg[Any]
+    result: InArg[any]
     
     def execute(self, ctx) -> None:
         ctx['tool_result'] = self.result.value
@@ -358,7 +358,7 @@ class MCPSetResourceResult(Component):
     ##### inPorts:
     - result: The result to return from the resource.
     """
-    result: InArg[Any]
+    result: InArg[any]
     
     def execute(self, ctx) -> None:
         ctx['resource_result'] = self.result.value
@@ -373,7 +373,7 @@ class MCPSetPromptResult(Component):
     ##### inPorts:
     - result: The result to return from the prompt.
     """
-    result: InArg[Any]
+    result: InArg[any]
     
     def execute(self, ctx) -> None:
         ctx['prompt_result'] = self.result.value
@@ -394,7 +394,7 @@ class MCPCreateImage(Component):
     """
     image_path: InArg[str]
     format: InArg[str]
-    image: OutArg[Any]
+    image: OutArg[any]
     
     def execute(self, ctx) -> None:
         image_path = self.image_path.value
@@ -443,9 +443,9 @@ class MCPGetArgument(Component):
     """
     args: InArg[dict]
     key: InArg[str]
-    default: InArg[Any]
+    default: InArg[any]
     
-    value: OutArg[Any]
+    value: OutArg[any]
     
     def execute(self, ctx) -> None:
         args = self.args.value
@@ -475,7 +475,7 @@ class MCPReportProgress(Component):
     - total (int): The total progress value.
     - message (str): An optional message to include with the progress report.
     """
-    ctx_obj: InArg[Any]
+    ctx_obj: InArg[any]
     current: InArg[int]
     total: InArg[int]
     message: InArg[str]
@@ -519,10 +519,10 @@ class MCPReadResource(Component):
     - data: The resource data.
     - mime_type: The MIME type of the resource.
     """
-    ctx_obj: InArg[Any]
+    ctx_obj: InArg[any]
     uri: InArg[str]
     
-    data: OutArg[Any]
+    data: OutArg[any]
     mime_type: OutArg[str]
     
     def execute(self, ctx) -> None:
@@ -561,7 +561,7 @@ class MCPCreateUserMessage(Component):
     - message: The user message object.
     """
     content: InArg[str]
-    message: OutArg[Any]
+    message: OutArg[any]
     
     def execute(self, ctx) -> None:
         content = self.content.value
@@ -595,7 +595,7 @@ class MCPCreateAssistantMessage(Component):
     - message: The assistant message object.
     """
     content: InArg[str]
-    message: OutArg[Any]
+    message: OutArg[any]
     
     def execute(self, ctx) -> None:
         content = self.content.value
